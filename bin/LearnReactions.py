@@ -65,7 +65,7 @@ def main():
             os.system('bunzip2 %s.bz2' % args.qsin)
     RS = Nanoreactor(**dict(args._get_kwargs())) # _get_kwargs takes the ArgumentParser object and turns it into a dictionary
     RS.Output()
-    shutil.copyfile(os.environ['PATH'].split(os.pathsep)[0] + '/reactions.vmd', './reactions.vmd')
+    shutil.copyfile(os.path.join(os.path.expanduser("~"), 'bin', 'reactions.vmd'), './reactions.vmd')
     print("Reaction product identification finished.  color.dat and bonds.dat generated.  Now run: vmd -e reactions.vmd -args %s" % args.xyzin)
 
 
