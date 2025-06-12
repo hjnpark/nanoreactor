@@ -894,7 +894,7 @@ class FragmentID(Calculation):
             raise RuntimeError
         M.write(os.path.join(self.home, 'initial.xyz'))
         # Note that the "first" method and basis set is used for fragment identification.
-        make_task("identify-fragments.py initial.xyz --method %s --basis \"%s\" --charge %i --mult %i &> fragmentid.log" % 
+        make_task("identify-fragments.py initial.xyz --method %s --basis \"%s\" --charge %i --mult %i > fragmentid.log 2>&1" % 
                   (self.methods[0], self.bases[0], self.charge, self.mult), 
                   self.home, inputs=["initial.xyz"], outputs=["fragmentid.log", "fragmentid.tar.bz2"], 
                   tag=self.name, calc=self, verbose=self.verbose)
@@ -941,7 +941,7 @@ class FragmentOpt(Calculation):
             return
         if self.read_only: return
         # Note that the "last" method and basis set is used for the fragment optimization
-        make_task("optimize-fragments.py --method %s --basis \"%s\" &> fragmentopt.log" % 
+        make_task("optimize-fragments.py --method %s --basis \"%s\" > fragmentopt.log 2>&1" % 
                   (self.methods[-1], self.bases[-1]), 
                   self.home, outputs=["fragmentopt.log", "fragmentopt.tar.bz2"], 
                   tag=self.name, calc=self, verbose=self.verbose)
@@ -1011,7 +1011,7 @@ class Optimization(Calculation):
             raise RuntimeError
         M.write(os.path.join(self.home, 'initial.xyz'))
         # Note that the "first" method and basis set is used for the geometry optimization.
-        make_task("optimize-geometry.py initial.xyz --method %s --basis \"%s\" --charge %i --mult %i &> optimize.log" % 
+        make_task("optimize-geometry.py initial.xyz --method %s --basis \"%s\" --charge %i --mult %i > optimize.log 2>&1" % 
                   (self.methods[0], self.bases[0], self.charge, self.mult), 
                   self.home, inputs=["initial.xyz"], outputs=["optimize.log", "optimize.tar.bz2"], 
                   tag=self.name, calc=self, verbose=self.verbose)
@@ -1062,7 +1062,7 @@ class TransitionState(Calculation):
             # that was missing from earlier versions of the code, it
             # can be deleted later.
             if not os.path.exists(os.path.join(self.home, 'irc_transition.vib')):
-                make_task("ts-analyze.py ts.xyz --method %s --basis \"%s\" --charge %i --mult %i &> ts-analyze.log" % 
+                make_task("ts-analyze.py ts.xyz --method %s --basis \"%s\" --charge %i --mult %i > ts-analyze.log 2>&1" % 
                           (self.methods[-1], self.bases[-1], self.charge, self.mult),
                           self.home, inputs=["ts.xyz"], outputs=["ts-analyze.log", "ts-analyze.tar.bz2", "irc_transition.bnd", "irc_transition.vib"], 
                           tag=self.name+':AN', calc=None, verbose=self.verbose, priority=self.priority+1e6)
@@ -1102,7 +1102,7 @@ class TransitionState(Calculation):
             M.write(os.path.join(self.home, 'initial.xyz'))
             self.initpath.write(os.path.join(self.home, 'initpath.xyz'))
             # Launch the transition state calculation!
-            make_task("transition-state.py initial.xyz --initpath initpath.xyz --methods %s --bases %s --charge %i --mult %i &> transition-state.log" % 
+            make_task("transition-state.py initial.xyz --initpath initpath.xyz --methods %s --bases %s --charge %i --mult %i > transition-state.log 2>&1" % 
                       (' '.join(["\"%s\"" % i for i in self.methods]), ' '.join(["\"%s\"" % i for i in self.bases]), self.charge, self.mult),
                       self.home, inputs=["initial.xyz", "initpath.xyz"], outputs=["transition-state.log", "transition-state.tar.bz2"], 
                       tag=self.name, calc=self, verbose=self.verbose)
@@ -1137,7 +1137,7 @@ class FreezingString(Calculation):
             # that was missing from earlier versions of the code, it
             # can be deleted later.
             if not os.path.exists(os.path.join(self.home, 'irc_transition.vib')):
-                make_task("ts-analyze.py ts.xyz --method %s --basis \"%s\" --charge %i --mult %i &> ts-analyze.log" % 
+                make_task("ts-analyze.py ts.xyz --method %s --basis \"%s\" --charge %i --mult %i > ts-analyze.log 2>&1" % 
                           (self.methods[-1], self.bases[-1], self.charge, self.mult),
                           self.home, inputs=["ts.xyz"], outputs=["ts-analyze.log", "ts-analyze.tar.bz2", "irc_transition.bnd", "irc_transition.vib"], 
                           tag=self.name+':AN', calc=None, verbose=self.verbose, priority=self.priority+1e6)
@@ -1169,7 +1169,7 @@ class FreezingString(Calculation):
             M = M[0] + M[-1]
             M.write(os.path.join(self.home, 'initial.xyz'))
             # Launch the task.
-            make_task("freezing-string.py initial.xyz --methods %s --bases %s --charge %i --mult %i &> freezing-string.log" % 
+            make_task("freezing-string.py initial.xyz --methods %s --bases %s --charge %i --mult %i > freezing-string.log 2>&1" % 
                       (' '.join(["\"%s\"" % i for i in self.methods]), ' '.join(["\"%s\"" % i for i in self.bases]), self.charge, self.mult),
                       self.home, inputs=["initial.xyz"], outputs=["freezing-string.log", "freezing-string.tar.bz2"], 
                       tag=self.name, calc=self, verbose=self.verbose)
@@ -1393,7 +1393,7 @@ class Interpolation(Calculation):
             M = deepcopy(self.initial)
         M.write(os.path.join(self.home, '.interpolate.in.xyz'))
         # Note that the "first" method and basis set is used for the geometry optimization.
-        make_task("Nebterpolate.py --morse 1e-2 --repulsive --allpairs --anchor 2 .interpolate.in.xyz interpolated.xyz &> interpolate.log",
+        make_task("Nebterpolate.py --morse 1e-2 --repulsive --allpairs --anchor 2 .interpolate.in.xyz interpolated.xyz > interpolate.log 2>&1",
                   self.home, inputs=[".interpolate.in.xyz"], outputs=["interpolate.log", "interpolated.xyz"], 
                   tag=self.name+"_interpolate", calc=self, verbose=self.verbose)
 
